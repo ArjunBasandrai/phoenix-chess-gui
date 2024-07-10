@@ -4,13 +4,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+
     public Vector2 a1 = new Vector2(-4.875f, -3.375f);
     public float spacing = 0.75f;
 
     public string moveList = "";
 
     public GameObject[] promoteTo;
-
     // Start is called before the first frame update
     void Awake()
     {

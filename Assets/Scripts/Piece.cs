@@ -19,7 +19,6 @@ public class Piece : MonoBehaviour
     {
         
     }
-
     public void OnClicked()
     {
         print(name);
