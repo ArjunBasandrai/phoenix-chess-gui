@@ -421,7 +421,7 @@ GameObject:
   m_Component:
   - component: {fileID: 175237880}
   m_Layer: 0
-  m_Name: a
+  m_Name: 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -628,7 +628,7 @@ GameObject:
   m_Component:
   - component: {fileID: 225111421}
   m_Layer: 0
-  m_Name: h
+  m_Name: 8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -944,7 +944,7 @@ GameObject:
   m_Component:
   - component: {fileID: 349355071}
   m_Layer: 0
-  m_Name: c
+  m_Name: 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1536,7 +1536,7 @@ GameObject:
   m_Component:
   - component: {fileID: 503064122}
   m_Layer: 0
-  m_Name: g
+  m_Name: 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1575,6 +1575,8 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
+  - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1590,6 +1592,21 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
+--- !u!114 &519420030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 077440325c6db3a459939e74ed0dd5b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  a1: {x: -4.875, y: -3.375}
+  spacing: 0.75
+  moveList: 
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -1647,6 +1664,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f16e6464505f8d842abb52a9f95704b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  path: E:\elixir-chess-engine\elixir.exe
 --- !u!1 &535553837
 GameObject:
   m_ObjectHideFlags: 0
@@ -1886,7 +1916,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3830418223611418741, guid: 0b8dcd1942befea4abc3ff24eb849e64, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3830418223611418741, guid: 0b8dcd1942befea4abc3ff24eb849e64, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2374,7 +2404,7 @@ GameObject:
   m_Component:
   - component: {fileID: 719687821}
   m_Layer: 0
-  m_Name: d
+  m_Name: 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3162,7 +3192,7 @@ GameObject:
   m_Component:
   - component: {fileID: 862119637}
   m_Layer: 0
-  m_Name: e
+  m_Name: 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5274,7 +5304,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1595468606}
   m_Layer: 0
-  m_Name: b
+  m_Name: 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5970,7 +6000,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 776011974317253791, guid: 7f474bd067460524f902e91452d3944d, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 776011974317253791, guid: 7f474bd067460524f902e91452d3944d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6583,10 +6613,10 @@ Transform:
   - {fileID: 3948730229799215573}
   - {fileID: 1796028766}
   - {fileID: 6630118586095368915}
-  - {fileID: 317710288200388}
   - {fileID: 1781470143}
   - {fileID: 632145980}
   - {fileID: 910220953978640218}
+  - {fileID: 317710288200388}
   - {fileID: 91831712}
   - {fileID: 1398591988}
   - {fileID: 443836031}
@@ -6607,7 +6637,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1860362292}
   m_Layer: 0
-  m_Name: f
+  m_Name: 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7886,7 +7916,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3830418223611418741, guid: 0b8dcd1942befea4abc3ff24eb849e64, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3830418223611418741, guid: 0b8dcd1942befea4abc3ff24eb849e64, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8191,7 +8221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7446356064314202553, guid: ea521c289d543254a8ed8c6493b7559b, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7446356064314202553, guid: ea521c289d543254a8ed8c6493b7559b, type: 3}
       propertyPath: m_LocalPosition.x
