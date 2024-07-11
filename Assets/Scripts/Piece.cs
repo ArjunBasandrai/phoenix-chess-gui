@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Piece : MonoBehaviour
 {
+
+    public char file;
+    public int rank;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,5 +18,9 @@ public class Piece : MonoBehaviour
     void Update()
     {
         
+    }
+    public void OnClicked()
+    {
+        print(name);
     }
 }

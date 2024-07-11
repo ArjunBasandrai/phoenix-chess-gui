@@ -1576,6 +1576,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1603,6 +1604,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 077440325c6db3a459939e74ed0dd5b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  a1: {x: -4.875, y: -3.375}
+  spacing: 0.75
+  moveList: 
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -1660,6 +1664,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f16e6464505f8d842abb52a9f95704b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  path: E:\elixir-chess-engine\elixir.exe
 --- !u!1 &535553837
 GameObject:
   m_ObjectHideFlags: 0
