@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,6 +24,7 @@ public class UCIManager : MonoBehaviour
 
     public TextMeshProUGUI whiteTimeUI;
     public TextMeshProUGUI blackTimeUI;
+    public TextMeshProUGUI pvText;
 
     public float whiteTime = 180000;
     public float blackTime = 180000;
@@ -36,6 +38,15 @@ public class UCIManager : MonoBehaviour
     public int movePiece;
     public string moveList = "";
 
+    public string castle = "-";
+
+    public string pv;
+    public bool pvChange;
+
+    public GameObject[] promoteTo = new GameObject[8];
+
+    public int promoteLocation = -1;
+    public char promoteType;
 
     void Awake()
     {
@@ -68,38 +79,42 @@ public class UCIManager : MonoBehaviour
             string output = await uciReader.ReadLineAsync();
             if (!string.IsNullOrEmpty(output))
             {
-                print(output);
+                //print(output);
                 string[] z = output.Split();
-                if (z[0] == "bestmove")
+                if (z[0] == "info")
+                {
+                    pvChange = true;
+                    pv = output;
+                }
+                else if (z[0] == "bestmove")
                 {
                     moveGoing = false;
                     string move = z[1];
-                    if (move == "e1g1")
+                    if (move.Length == 5)
+                    {
+                        int rank = move[0] - 'a';
+                        int file = move[1] - '1';
+                        int drank = move[2] - 'a';
+                        int dfile = move[3] - '1';
+                        GameObject piece = pieceTable[file * 8 + rank];
+                        Vector2 toMoveToCoord = GameManager.instance.SquareToCoord(move[2], move[3] - 48);
+                        death = true;
+                        diePiece = pieceTable[dfile * 8 + drank];
+                        moveLocation = toMoveToCoord;
+                        movePiece = dfile * 8 + drank;
+                        pieceTable[dfile * 8 + drank] = piece;
+                        pieceTable[file * 8 + rank] = null;
+                        moveList += " " + move;
+                        promoteLocation = dfile * 8 + drank;
+                        promoteType = move[-1];
+                    }
+                    else if (move == "e1g1")
                     {
                         GameObject piece = pieceTable[4];
                         if (piece.name == "white_king")
                         {
-                            GameObject rook = pieceTable[7];
-                            Vector2 rookToCoord = GameManager.instance.SquareToCoord('f', 1);
-                            Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('g', 1);
-                            rook.transform.position = rookToCoord;
-                            piece.transform.position = toMoveToCoord;
-                            pieceTable[6] = piece;
-                            pieceTable[4] = null;
-                            pieceTable[5] = rook;
-                            pieceTable[7] = null;
-                        }
-                        else
-                        {
-                            Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('g', 1);
-                            GameObject die = pieceTable[6];
-                            if (die)
-                            {
-                                Destroy(die);
-                            }
-                            piece.transform.position = toMoveToCoord;
-                            pieceTable[6] = piece;
-                            pieceTable[4] = null;
+                            castle = move;
+                            moveList += " " + move;
                         }
                     }
                     else if (move == "e1c1")
@@ -107,56 +122,17 @@ public class UCIManager : MonoBehaviour
                         GameObject piece = pieceTable[4];
                         if (piece.name == "white_king")
                         {
-                            Vector2 rookCoord = GameManager.instance.SquareToCoord('a', 1);
-                            Vector2 rookToCoord = GameManager.instance.SquareToCoord('d', 1);
-                            Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('c', 1);
-                            GameObject rook = pieceTable[0];
-                            rook.transform.position = rookToCoord;
-                            piece.transform.position = toMoveToCoord;
-                            pieceTable[2] = piece;
-                            pieceTable[4] = null;
-                            pieceTable[3] = rook;
-                            pieceTable[0] = null;
-                        }
-                        else
-                        {
-                            Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('c', 1);
-                            GameObject die = pieceTable[2];
-                            if (die)
-                            {
-                                Destroy(die);
-                            }
-                            piece.transform.position = toMoveToCoord;
-                            pieceTable[2] = piece;
-                            pieceTable[4] = null;
+                            castle = move;
+                            moveList += " " + move;
                         }
                     }
-                    if (move == "e8g8")
+                    else if (move == "e8g8")
                     {
                         GameObject piece = pieceTable[60];
                         if (piece.name == "black_king")
                         {
-                            GameObject rook = pieceTable[63];
-                            Vector2 rookToCoord = GameManager.instance.SquareToCoord('f', 8);
-                            Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('g', 8);
-                            rook.transform.position = rookToCoord;
-                            piece.transform.position = toMoveToCoord;
-                            pieceTable[62] = piece;
-                            pieceTable[60] = null;
-                            pieceTable[61] = rook;
-                            pieceTable[63] = null;
-                        }
-                        else
-                        {
-                            Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('g', 8);
-                            GameObject die = pieceTable[62];
-                            if (die)
-                            {
-                                Destroy(die);
-                            }
-                            piece.transform.position = toMoveToCoord;
-                            pieceTable[62] = piece;
-                            pieceTable[60] = null;
+                            castle = move;
+                            moveList += " " + move;
                         }
                     }
                     else if (move == "e8c8")
@@ -164,52 +140,50 @@ public class UCIManager : MonoBehaviour
                         GameObject piece = pieceTable[60];
                         if (piece.name == "black_king")
                         {
-                            Vector2 rookCoord = GameManager.instance.SquareToCoord('a', 8);
-                            Vector2 rookToCoord = GameManager.instance.SquareToCoord('d', 8);
-                            Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('c', 8);
-                            GameObject rook = pieceTable[56];
-                            rook.transform.position = rookToCoord;
-                            piece.transform.position = toMoveToCoord;
-                            pieceTable[58] = piece;
-                            pieceTable[60] = null;
-                            pieceTable[59] = rook;
-                            pieceTable[56] = null;
-                        }
-                        else
-                        {
-                            Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('c', 8);
-                            GameObject die = pieceTable[58];
-                            if (die)
-                            {
-                                Destroy(die);
-                            }
-                            piece.transform.position = toMoveToCoord;
-                            pieceTable[58] = piece;
-                            pieceTable[60] = null;
+                            castle = move;
+                            moveList += " " + move;
                         }
                     }
                     else
                     {
-                        Vector2 coords = GameManager.instance.SquareToCoord(move[0], move[1] - 48);
-                        print(coords);
                         int rank = move[0] - 'a';
                         int file = move[1] - '1';
-                        print(rank);
-                        print(file);
-                        GameObject piece = pieceTable[file * 8 + rank];
-                        print(" ");
-                        Vector2 toMoveToCoord = GameManager.instance.SquareToCoord(move[2], move[3] - 48);
                         int drank = move[2] - 'a';
                         int dfile = move[3] - '1';
-                        print(drank);
+                        GameObject piece = pieceTable[file * 8 + rank];
+                        Vector2 toMoveToCoord = GameManager.instance.SquareToCoord(move[2], move[3] - 48);
                         death = true;
-                        diePiece = pieceTable[dfile * 8 + drank];
-                        print(dfile * 3);
+                        if (rank == 5 && Mathf.Abs(file-dfile)==1)
+                        {
+                            if (moveList[-1] == int.Parse(move[3].ToString())-1 && moveList[-2] == move[0] && move[-3] == int.Parse(move[3].ToString())+1 && move[-4] == move[0])
+                            {
+                                diePiece = pieceTable[(dfile - 1) * 8 + rank];
+                            }
+                            else
+                            {
+                                diePiece = pieceTable[dfile * 8 + drank];
+                            }
+                        }
+                        else if (rank == 4 && Mathf.Abs(file - dfile) == 1)
+                        {
+                            if (moveList[-1] == int.Parse(move[3].ToString()) + 1 && moveList[-2] == move[0] && move[-3] == int.Parse(move[3].ToString()) - 1 && move[-4] == move[0])
+                            {
+                                diePiece = pieceTable[(dfile + 1) * 8 + rank];
+                            }
+                            else
+                            {
+                                diePiece = pieceTable[dfile * 8 + drank];
+                            }
+                        }
+                        else
+                        {
+                            diePiece = pieceTable[dfile * 8 + drank];
+                        }
                         moveLocation = toMoveToCoord;
                         movePiece = dfile * 8 + drank;
                         pieceTable[dfile * 8 + drank] = piece;
                         pieceTable[file * 8 + rank] = null;
-                        moveList += " " + z[1];
+                        moveList += " " + move;
                         tomove = true;
                     }
                 }
@@ -253,8 +227,16 @@ public class UCIManager : MonoBehaviour
 
     void Update()
     {
-        print("Herllo");
-        print(tomove);
+        if (pvChange)
+        {
+            string[] pvs = pv.Split();
+            int startIndex = 17;
+            int length = pvs.Length - 18;
+
+            string[] _pv = pvs.Skip(startIndex).Take(length).ToArray();
+
+            pvText.text = string.Join(" ", _pv);
+        }
         if (tomove)
         {
             StartCoroutine(Move());
@@ -286,6 +268,94 @@ public class UCIManager : MonoBehaviour
         {
             pieceTable[movePiece].transform.position = moveLocation;
             movePiece = -1;
+        }
+        if (castle != "-")
+        {
+            string move = castle;
+            castle = "-";
+            if (move == "e1c1")
+            {
+                Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('c', 1);
+                pieceTable[4].transform.position = toMoveToCoord; 
+                pieceTable[2] = pieceTable[4];
+                pieceTable[4] = null;
+                pieceTable[3] = pieceTable[0];
+                pieceTable[0] = null;
+            }
+            if (move == "e1g1")
+            {
+                Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('g', 1);
+                pieceTable[4].transform.position = toMoveToCoord;
+                pieceTable[6] = pieceTable[4];
+                pieceTable[4] = null;
+                pieceTable[5] = pieceTable[7];
+                pieceTable[7] = null;
+            }
+            if (move == "e8c8")
+            {
+                Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('c', 8);
+                pieceTable[60].transform.position = toMoveToCoord;
+                pieceTable[58] = pieceTable[4];
+                pieceTable[60] = null;
+                pieceTable[59] = pieceTable[56];
+                pieceTable[56] = null;
+            }
+            if (move == "e1c1")
+            {
+                Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('g', 8);
+                pieceTable[60].transform.position = toMoveToCoord;
+                pieceTable[62] = pieceTable[60];
+                pieceTable[60] = null;
+                pieceTable[61] = pieceTable[62];
+                pieceTable[63] = null;
+            }
+            tomove = true;
+        }
+        if (promoteLocation != -1)
+        {
+            GameObject p = new GameObject();
+            GameObject r = p;
+            if (moveSide == -1)
+            {
+                if (promoteType == 'n')
+                {
+                    p = Instantiate(promoteTo[0], pieceTable[promoteLocation].transform.position, Quaternion.identity);
+                }
+                else if (promoteType == 'b')
+                {
+                    p = Instantiate(promoteTo[1], pieceTable[promoteLocation].transform.position, Quaternion.identity);
+                }
+                else if (promoteType == 'r')
+                {
+                    p = Instantiate(promoteTo[2], pieceTable[promoteLocation].transform.position, Quaternion.identity);
+                }
+                else if (promoteType == 'q')
+                {
+                    p = Instantiate(promoteTo[3], pieceTable[promoteLocation].transform.position, Quaternion.identity);
+                }
+            }
+            else if (moveSide == 1)
+            {
+                if (promoteType == 'n')
+                {
+                    p = Instantiate(promoteTo[4], pieceTable[promoteLocation].transform.position, Quaternion.identity);
+                }
+                else if (promoteType == 'b')
+                {
+                    p = Instantiate(promoteTo[5], pieceTable[promoteLocation].transform.position, Quaternion.identity);
+                }
+                else if (promoteType == 'r')
+                {
+                    p = Instantiate(promoteTo[6], pieceTable[promoteLocation].transform.position, Quaternion.identity);
+                }
+                else if (promoteType == 'q')
+                {
+                    p = Instantiate(promoteTo[7], pieceTable[promoteLocation].transform.position, Quaternion.identity);
+                }
+            }
+            Destroy(pieceTable[promoteLocation]);
+            Destroy(r);
+            pieceTable[promoteLocation] = p;
         }
     }
 

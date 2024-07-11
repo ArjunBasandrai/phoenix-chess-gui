@@ -17,7 +17,6 @@ public class Piece : MonoBehaviour
     void Update()
     {
     }
-
     public void OnClicked()
     {
         transform.position = pos;
