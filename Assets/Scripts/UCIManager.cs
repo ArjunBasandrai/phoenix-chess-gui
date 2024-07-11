@@ -5,20 +5,42 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
+using TMPro;
 
 public class UCIManager : MonoBehaviour
 {
 
     public string path;
 
-    bool tomove = true;
+    bool tomove = false;
 
     private Process uciProcess;
     private StreamWriter uciWriter;
     private StreamReader uciReader;
 
+    public int moveSide = -1;
+    public bool moveGoing = false;
+
+    public TextMeshProUGUI whiteTimeUI;
+    public TextMeshProUGUI blackTimeUI;
+
+    public float whiteTime = 180000;
+    public float blackTime = 180000;
+
+    public GameObject[] pieceTable = new GameObject[64];
+    //public int deathLocation;
+    public bool death;
+    GameObject diePiece;
+
+    public Vector2 moveLocation;
+    public int movePiece;
+    public string moveList = "";
+
+
     void Awake()
     {
+
+
         uciProcess = new Process
         {
             StartInfo = new ProcessStartInfo
@@ -35,149 +57,175 @@ public class UCIManager : MonoBehaviour
 
         uciWriter = uciProcess.StandardInput;
         uciReader = uciProcess.StandardOutput;
+
+        Task.Run(() => ReadOutput());
     }
 
-    private void ReadOutput()
+    private async Task ReadOutput()
     {
         while (!uciProcess.HasExited)
         {
-            string output = uciReader.ReadLine();
+            string output = await uciReader.ReadLineAsync();
             if (!string.IsNullOrEmpty(output))
             {
-                if (output.Split()[0] == "bestmove")
+                print(output);
+                string[] z = output.Split();
+                if (z[0] == "bestmove")
                 {
-                    print(output);
-                    string move = output.Split()[1];
+                    moveGoing = false;
+                    string move = z[1];
                     if (move == "e1g1")
                     {
-                        Vector2 coords = GameManager.instance.SquareToCoord('e', 1);
-                        Collider2D[] colls = Physics2D.OverlapCircleAll(coords, 0.1f);
-                        GameObject piece = colls[0].gameObject;
+                        GameObject piece = pieceTable[4];
                         if (piece.name == "white_king")
                         {
-                            Vector2 rookCoord = GameManager.instance.SquareToCoord('h', 1);
-                            Collider2D[] rookColl = Physics2D.OverlapCircleAll(rookCoord, 0.1f);
+                            GameObject rook = pieceTable[7];
                             Vector2 rookToCoord = GameManager.instance.SquareToCoord('f', 1);
                             Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('g', 1);
-                            GameObject rook = rookColl[0].gameObject;
                             rook.transform.position = rookToCoord;
                             piece.transform.position = toMoveToCoord;
+                            pieceTable[6] = piece;
+                            pieceTable[4] = null;
+                            pieceTable[5] = rook;
+                            pieceTable[7] = null;
                         }
                         else
                         {
                             Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('g', 1);
-                            Collider2D[] collsToRem = Physics2D.OverlapCircleAll(toMoveToCoord, 0.1f);
-                            if (collsToRem.Length > 0)
+                            GameObject die = pieceTable[6];
+                            if (die)
                             {
-                                Destroy(collsToRem[0].gameObject);
+                                Destroy(die);
                             }
                             piece.transform.position = toMoveToCoord;
+                            pieceTable[6] = piece;
+                            pieceTable[4] = null;
                         }
                     }
                     else if (move == "e1c1")
                     {
-                        Vector2 coords = GameManager.instance.SquareToCoord('e', 1);
-                        Collider2D[] colls = Physics2D.OverlapCircleAll(coords, 0.1f);
-                        GameObject piece = colls[0].gameObject;
+                        GameObject piece = pieceTable[4];
                         if (piece.name == "white_king")
                         {
                             Vector2 rookCoord = GameManager.instance.SquareToCoord('a', 1);
-                            Collider2D[] rookColl = Physics2D.OverlapCircleAll(rookCoord, 0.1f);
                             Vector2 rookToCoord = GameManager.instance.SquareToCoord('d', 1);
                             Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('c', 1);
-                            GameObject rook = rookColl[0].gameObject;
+                            GameObject rook = pieceTable[0];
                             rook.transform.position = rookToCoord;
                             piece.transform.position = toMoveToCoord;
+                            pieceTable[2] = piece;
+                            pieceTable[4] = null;
+                            pieceTable[3] = rook;
+                            pieceTable[0] = null;
                         }
                         else
                         {
                             Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('c', 1);
-                            Collider2D[] collsToRem = Physics2D.OverlapCircleAll(toMoveToCoord, 0.1f);
-                            if (collsToRem.Length > 0)
+                            GameObject die = pieceTable[2];
+                            if (die)
                             {
-                                Destroy(collsToRem[0].gameObject);
+                                Destroy(die);
                             }
                             piece.transform.position = toMoveToCoord;
+                            pieceTable[2] = piece;
+                            pieceTable[4] = null;
                         }
                     }
                     if (move == "e8g8")
                     {
-                        Vector2 coords = GameManager.instance.SquareToCoord('e', 8);
-                        Collider2D[] colls = Physics2D.OverlapCircleAll(coords, 0.1f);
-                        GameObject piece = colls[0].gameObject;
+                        GameObject piece = pieceTable[60];
                         if (piece.name == "black_king")
                         {
-                            Vector2 rookCoord = GameManager.instance.SquareToCoord('h', 8);
-                            Collider2D[] rookColl = Physics2D.OverlapCircleAll(rookCoord, 0.1f);
+                            GameObject rook = pieceTable[63];
                             Vector2 rookToCoord = GameManager.instance.SquareToCoord('f', 8);
                             Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('g', 8);
-                            GameObject rook = rookColl[0].gameObject;
                             rook.transform.position = rookToCoord;
                             piece.transform.position = toMoveToCoord;
+                            pieceTable[62] = piece;
+                            pieceTable[60] = null;
+                            pieceTable[61] = rook;
+                            pieceTable[63] = null;
                         }
                         else
                         {
                             Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('g', 8);
-                            Collider2D[] collsToRem = Physics2D.OverlapCircleAll(toMoveToCoord, 0.1f);
-                            if (collsToRem.Length > 0)
+                            GameObject die = pieceTable[62];
+                            if (die)
                             {
-                                Destroy(collsToRem[0].gameObject);
+                                Destroy(die);
                             }
                             piece.transform.position = toMoveToCoord;
+                            pieceTable[62] = piece;
+                            pieceTable[60] = null;
                         }
                     }
                     else if (move == "e8c8")
                     {
-                        Vector2 coords = GameManager.instance.SquareToCoord('e', 8);
-                        Collider2D[] colls = Physics2D.OverlapCircleAll(coords, 0.1f);
-                        GameObject piece = colls[0].gameObject;
+                        GameObject piece = pieceTable[60];
                         if (piece.name == "black_king")
                         {
                             Vector2 rookCoord = GameManager.instance.SquareToCoord('a', 8);
-                            Collider2D[] rookColl = Physics2D.OverlapCircleAll(rookCoord, 0.1f);
                             Vector2 rookToCoord = GameManager.instance.SquareToCoord('d', 8);
                             Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('c', 8);
-                            GameObject rook = rookColl[0].gameObject;
+                            GameObject rook = pieceTable[56];
                             rook.transform.position = rookToCoord;
                             piece.transform.position = toMoveToCoord;
+                            pieceTable[58] = piece;
+                            pieceTable[60] = null;
+                            pieceTable[59] = rook;
+                            pieceTable[56] = null;
                         }
                         else
                         {
                             Vector2 toMoveToCoord = GameManager.instance.SquareToCoord('c', 8);
-                            Collider2D[] collsToRem = Physics2D.OverlapCircleAll(toMoveToCoord, 0.1f);
-                            if (collsToRem.Length > 0)
+                            GameObject die = pieceTable[58];
+                            if (die)
                             {
-                                Destroy(collsToRem[0].gameObject);
+                                Destroy(die);
                             }
                             piece.transform.position = toMoveToCoord;
+                            pieceTable[58] = piece;
+                            pieceTable[60] = null;
                         }
                     }
                     else
                     {
                         Vector2 coords = GameManager.instance.SquareToCoord(move[0], move[1] - 48);
-                        Collider2D[] colls = Physics2D.OverlapCircleAll(coords, 0.1f);
-                        GameObject piece = colls[0].gameObject;
+                        print(coords);
+                        int rank = move[0] - 'a';
+                        int file = move[1] - '1';
+                        print(rank);
+                        print(file);
+                        GameObject piece = pieceTable[file * 8 + rank];
+                        print(" ");
                         Vector2 toMoveToCoord = GameManager.instance.SquareToCoord(move[2], move[3] - 48);
-                        Collider2D[] collsToRem = Physics2D.OverlapCircleAll(toMoveToCoord, 0.1f);
-                        if (collsToRem.Length > 0)
-                        {
-                            Destroy(collsToRem[0].gameObject);
-                        }
-                        piece.transform.position = toMoveToCoord;
+                        int drank = move[2] - 'a';
+                        int dfile = move[3] - '1';
+                        print(drank);
+                        death = true;
+                        diePiece = pieceTable[dfile * 8 + drank];
+                        print(dfile * 3);
+                        moveLocation = toMoveToCoord;
+                        movePiece = dfile * 8 + drank;
+                        pieceTable[dfile * 8 + drank] = piece;
+                        pieceTable[file * 8 + rank] = null;
+                        moveList += " " + z[1];
+                        tomove = true;
                     }
-                    GameManager.instance.moveList += " " + output.Split()[1];
-                    tomove = true;
-                    return;
                 }
             }
         }
+    }
+
+    void Move(string[] z)
+    {
+
     }
 
     public void SendCommand(string command)
     {
         if (uciWriter != null && !uciProcess.HasExited)
         {
-            //print("Sending command: " + command);
             uciWriter.WriteLine(command);
             uciWriter.Flush();
         }
@@ -188,24 +236,56 @@ public class UCIManager : MonoBehaviour
         SendCommand("uci");
         SendCommand("ucinewgame");
         SendCommand("isready");
-        SendCommand("go depth 12");
-        ReadOutput();
+        SendCommand("go wtime " + whiteTime.ToString() + " btime " + blackTime.ToString());
+        moveGoing = true;
+        tomove = false;
     }
 
     public IEnumerator Move()
     {
-        yield return new WaitForSeconds(1);
-        SendCommand("position startpos moves" + GameManager.instance.moveList);
-        SendCommand("go depth 12");
-        ReadOutput();
+        SendCommand("position startpos moves" + moveList);
+        yield return new WaitForSeconds(0.006f);
+        moveSide *= -1;
+        moveGoing = true;
+        tomove = false;
+        SendCommand("go wtime " + whiteTime.ToString() + " btime " + blackTime.ToString());
     }
 
     void Update()
     {
+        print("Herllo");
+        print(tomove);
         if (tomove)
         {
-            tomove = false;
             StartCoroutine(Move());
+            tomove = false;
+        }
+        if (moveGoing)
+        {
+            if (moveSide == -1)
+            {
+                whiteTime -= Time.deltaTime * 1000;
+                int minutes = Mathf.FloorToInt((whiteTime / 1000) / 60);
+                int seconds = Mathf.FloorToInt((whiteTime / 1000) % 60);
+                whiteTimeUI.text = minutes.ToString() + ":" + seconds.ToString();
+            }
+            if (moveSide == 1)
+            {
+                blackTime -= Time.deltaTime * 1000;
+                int minutes = Mathf.FloorToInt((blackTime / 1000) / 60);
+                int seconds = Mathf.FloorToInt((blackTime / 1000) % 60);
+                blackTimeUI.text = minutes.ToString() + ":" + seconds.ToString();
+            }
+        }
+        if (death)
+        {
+            death = false;
+            Destroy(diePiece);
+        }
+        if (movePiece != -1)
+        {
+            pieceTable[movePiece].transform.position = moveLocation;
+            movePiece = -1;
         }
     }
 
