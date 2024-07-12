@@ -5,8 +5,7 @@ using UnityEngine;
 public class Piece : MonoBehaviour
 {
 
-    public char file;
-    public int rank;
+    public Vector2 pos;
 
     // Start is called before the first frame update
     void Start()
@@ -17,10 +16,10 @@ public class Piece : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
     public void OnClicked()
     {
+        transform.position = pos;
         print(name);
     }
 }
