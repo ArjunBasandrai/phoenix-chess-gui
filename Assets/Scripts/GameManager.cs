@@ -38,19 +38,15 @@ public class GameManager : MonoBehaviour
 
     public string CoordToSquare(Vector2 coords)
     {
-        string file = "";
-        string rank = "";
-
         Vector2 _coords = coords;
         _coords.x -= a1.x;
         _coords.x *= 1 / spacing;
         _coords.x = Mathf.FloorToInt(_coords.x) + 1;
-        file = ((char)(int)(_coords.x + 64)).ToString();
+        string file = ((char)(int)(_coords.x + 64)).ToString();
         _coords.y -= a1.y;
         _coords.y *= 1 / spacing;
         _coords.y = Mathf.FloorToInt(_coords.y) + 2;
-        rank = ((int)_coords.y).ToString();
-
+        string rank = ((int)_coords.y).ToString();
         return file + rank;
     }
 }
